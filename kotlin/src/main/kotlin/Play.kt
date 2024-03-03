@@ -1,6 +1,11 @@
+import kotlin.math.*
+
 open class Play(val name: String, val type: String) {
     open fun amountFor(audience: Int): Int {
         TODO("Not yet implemented")
+    }
+    open fun credits(audience: Int) : Int {
+        return max(audience - 30, 0)
     }
 }
 
@@ -22,5 +27,9 @@ class Comedy(name: String, type: String): Play(name, type) {
             else -> 0
         }
         return generalComedyAmount + largeAudienceBonus
+    }
+
+    override fun credits(audience: Int): Int {
+        return max(audience - 30, 0) + floor((audience / 5).toDouble()).toInt()
     }
 }
