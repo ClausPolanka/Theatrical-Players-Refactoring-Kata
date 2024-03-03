@@ -57,20 +57,21 @@ class StatementPrinter {
     }
 
     private fun comedyAmountFor(perf: Performance): Int {
-        var amount = 30000
-        if (perf.audience > 20) {
-            amount += 10000 + 500 * (perf.audience - 20)
+        val generalComedyAmount = 30000 + 300 * perf.audience
+        val largeAudienceBonus = when {
+            perf.audience > 20 -> 10000 + 500 * (perf.audience - 20)
+            else -> 0
         }
-        amount += 300 * perf.audience
-        return amount
+        return generalComedyAmount + largeAudienceBonus
     }
 
     private fun tragedyAmountFor(perf: Performance): Int {
-        var amount = 40000
-        if (perf.audience > 30) {
-            amount += 1000 * (perf.audience - 30)
+        val generalTragedyAmount = 40000
+        val largeAudienceBonus = when {
+            perf.audience > 30 -> 1000 * (perf.audience - 30)
+            else -> 0
         }
-        return amount
+        return generalTragedyAmount + largeAudienceBonus
     }
 
 }
