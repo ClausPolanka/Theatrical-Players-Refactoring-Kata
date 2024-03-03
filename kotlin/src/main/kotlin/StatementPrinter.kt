@@ -32,10 +32,14 @@ class StatementPrinter {
         var volumeCredits = 0
         invoice.performances.forEach { perf ->
             val play = plays.getValue(perf.playID)
-            // add volume credits
+
             volumeCredits += max(perf.audience - 30, 0)
+
             // add extra credit for every ten comedy attendees
-            if ("comedy" == play.type) volumeCredits += floor((perf.audience / 5).toDouble()).toInt()
+            volumeCredits += when (play.type) {
+                "comedy" -> floor((perf.audience / 5).toDouble()).toInt()
+                else -> 0
+            }
         }
         return volumeCredits
     }
