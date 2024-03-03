@@ -8,16 +8,16 @@ val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).forma
 class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
-        val triples = invoice.performances.map { perf ->
+        val statementData = invoice.performances.map { perf ->
             val play = plays.getValue(perf.playID)
             val amt = calculateAmountFor(play, perf)
-            Triple(play.name, amt, perf.audience)
+            StatementData(play.name, amt, perf.audience)
         }
-        val totalAmount = triples.sumBy { t -> t.second }
+        val totalAmount = statementData.sumBy { t -> t.amount }
         val volumeCredits = calculateVolumeCredits(invoice, plays)
 
         val header = "Statement for ${invoice.customer}\n"
-        val lines = triples.map { t -> "  ${t.first}: ${format((t.second / 100).toLong())} (${t.third} seats)\n"  }
+        val lines = statementData.map { t -> "  ${t.playName}: ${format((t.amount / 100).toLong())} (${t.audience} seats)\n"  }
         val amountOwned = "Amount owed is ${format((totalAmount / 100).toLong())}\n"
         val earnedCredits = "You earned $volumeCredits credits\n"
         return header + lines.joinToString(separator = "") + amountOwned + earnedCredits
@@ -65,3 +65,5 @@ class StatementPrinter {
     }
 
 }
+
+data class StatementData(val playName: String, val amount: Int, val audience: Int)
