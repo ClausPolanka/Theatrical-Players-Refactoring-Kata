@@ -15,9 +15,18 @@ class StatementPrinter {
         }
         val totalAmount = statementData.sumBy { t -> t.amount }
         val volumeCredits = calculateVolumeCredits(invoice, plays)
+        return createStatement(invoice, statementData, totalAmount, volumeCredits)
+    }
 
+    private fun createStatement(
+        invoice: Invoice,
+        statementData: List<StatementData>,
+        totalAmount: Int,
+        volumeCredits: Int
+    ): String {
         val header = "Statement for ${invoice.customer}\n"
-        val lines = statementData.map { t -> "  ${t.playName}: ${format((t.amount / 100).toLong())} (${t.audience} seats)\n"  }
+        val lines =
+            statementData.map { t -> "  ${t.playName}: ${format((t.amount / 100).toLong())} (${t.audience} seats)\n" }
         val amountOwned = "Amount owed is ${format((totalAmount / 100).toLong())}\n"
         val earnedCredits = "You earned $volumeCredits credits\n"
         return header + lines.joinToString(separator = "") + amountOwned + earnedCredits
