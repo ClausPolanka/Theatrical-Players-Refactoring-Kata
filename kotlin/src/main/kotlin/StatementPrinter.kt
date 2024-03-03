@@ -33,19 +33,18 @@ class StatementPrinter {
     }
 
     private fun calculateVolumeCredits(invoice: Invoice, plays: Map<String, Play>): Int {
-        var volumeCredits = 0
-        invoice.performances.forEach { perf ->
+        val creditData = invoice.performances.map { perf ->
             val play = plays.getValue(perf.playID)
-
-            volumeCredits += max(perf.audience - 30, 0)
-
-            // add extra credit for every ten comedy attendees
-            volumeCredits += when (play.type) {
-                "comedy" -> floor((perf.audience / 5).toDouble()).toInt()
-                else -> 0
-            }
+            Pair(play.type, perf.audience)
         }
-        return volumeCredits
+        val creditsAllPlayTypes = creditData
+            .map { p -> max(p.second - 30, 0) }
+            .sum()
+        val comedyCredits = creditData
+            .filter { it.first == "comedy"  }
+            .map { floor((it.second / 5).toDouble()).toInt() }
+            .sum()
+        return creditsAllPlayTypes + comedyCredits
     }
 
     private fun calculateAmountFor(play: Play, perf: Performance): Int {
