@@ -1,7 +1,7 @@
 import java.text.*
 import java.util.*
 
-val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).format(number) }
+private val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).format(number) }
 
 class StatementPrinter {
 
