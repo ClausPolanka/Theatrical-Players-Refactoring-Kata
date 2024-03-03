@@ -27,22 +27,4 @@ class StatementPrinterTests {
 
         verify(result)
     }
-
-    @Test
-    internal fun statementWithNewPlayTypes() {
-        val plays = mapOf(
-            "henry-v" to Play("Henry V", "history"),
-            "as-like" to Play("As You Like It", "pastoral")
-        )
-
-        val invoice = Invoice(
-            "BigCo", listOf(
-                Performance("henry-v", 53),
-                Performance("as-like", 55)
-            )
-        )
-
-        val statementPrinter = StatementPrinter()
-        assertThrows(Error::class.java) { statementPrinter.print(invoice, plays) }
-    }
 }

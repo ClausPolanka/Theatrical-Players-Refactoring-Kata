@@ -1,15 +1,18 @@
 import kotlin.math.*
 
-open class Play(val name: String, val type: String) {
-    open fun amountFor(audience: Int): Int {
-        TODO("Not yet implemented")
-    }
-    open fun credits(audience: Int) : Int {
+interface Play {
+    val name: String
+    val type: String
+    fun amountFor(audience: Int): Int
+    fun credits(audience: Int) : Int {
         return max(audience - 30, 0)
     }
 }
 
-class Tragedy(name: String, type: String): Play(name, type) {
+class Tragedy(
+    override val name: String,
+    override val type: String
+): Play {
     override fun amountFor(audience: Int): Int {
         val generalTragedyAmount = 40000
         val largeAudienceBonus = when {
@@ -19,7 +22,10 @@ class Tragedy(name: String, type: String): Play(name, type) {
         return generalTragedyAmount + largeAudienceBonus
     }
 }
-class Comedy(name: String, type: String): Play(name, type) {
+class Comedy(
+    override val name: String,
+    override val type: String
+): Play {
     override fun amountFor(audience: Int): Int {
         val generalComedyAmount = 30000 + 300 * audience
         val largeAudienceBonus = when {
