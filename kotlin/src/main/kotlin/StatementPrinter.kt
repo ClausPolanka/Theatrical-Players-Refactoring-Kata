@@ -6,13 +6,12 @@ private val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.U
 
 class StatementPrinter {
 
-    fun print(invoice: Invoice, plays: Map<String, Play>): String {
-        return createStatement(
+    fun print(invoice: Invoice, plays: Map<String, Play>): String =
+        createStatement(
             invoice.customer,
             invoice.statementDataFor(plays),
             invoice.creditsFor(plays)
         )
-    }
 
     private fun createStatement(
         customer: String,
