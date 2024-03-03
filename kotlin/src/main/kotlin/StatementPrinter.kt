@@ -28,7 +28,7 @@ class StatementPrinter {
         statementData: List<StatementData>,
         totalAmount: Int,
         volumeCredits: Int
-    )= """Statement for ${invoice.customer}
+    ) = """Statement for ${invoice.customer}
              |${statementData.statementLines()}
              |Amount owed is ${format((totalAmount / 100).toLong())}
              |You earned $volumeCredits credits
@@ -48,7 +48,7 @@ class StatementPrinter {
             .map { p -> max(p.second - 30, 0) }
             .sum()
         val comedyCredits = creditData
-            .filter { it.first == "comedy"  }
+            .filter { it.first == "comedy" }
             .map { floor((it.second / 5).toDouble()).toInt() }
             .sum()
         return creditsAllPlayTypes + comedyCredits
