@@ -8,26 +8,31 @@ class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
         val statementData = invoice.statementDataFor(plays)
-        val totalAmount = statementData.sumBy { it.amount }
+        val totalAmountInCents = statementData.sumBy { it.amountInCents }
         val volumeCredits = invoice.creditsFor(plays)
-        return createStatement(invoice, statementData, totalAmount, volumeCredits)
+        return createStatement(
+            invoice,
+            statementData,
+            totalAmountInCents,
+            volumeCredits
+        )
     }
 
     private fun createStatement(
         invoice: Invoice,
         statementData: List<StatementData>,
-        totalAmount: Int,
+        totalAmountInCents: Int,
         volumeCredits: Int
     ) = """Statement for ${invoice.customer}
              |${statementData.statementLines()}
-             |Amount owed is ${format(toDollar(totalAmount))}
+             |Amount owed is ${format(toDollar(totalAmountInCents))}
              |You earned $volumeCredits credits
              |""".trimMargin()
 
     private fun List<StatementData>.statementLines() =
         joinToString(separator = lineSeparator()) { statement ->
             "  ${statement.playName}: " +
-                "${format(toDollar(statement.amount))} " +
+                "${format(toDollar(statement.amountInCents))} " +
                 "(${statement.audience} seats)"
         }
 

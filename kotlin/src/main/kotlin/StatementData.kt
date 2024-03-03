@@ -1,1 +1,1 @@
-data class StatementData(val playName: String, val amount: Int, val audience: Int)
+data class StatementData(val playName: String, val amountInCents: Int, val audience: Int)
