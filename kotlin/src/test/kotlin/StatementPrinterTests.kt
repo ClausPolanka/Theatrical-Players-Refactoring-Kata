@@ -9,9 +9,9 @@ class StatementPrinterTests {
     internal fun exampleStatement() {
 
         val plays = mapOf(
-            "hamlet" to Play("Hamlet", "tragedy"),
-            "as-like" to Play("As You Like It", "comedy"),
-            "othello" to Play("Othello", "tragedy")
+            "hamlet" to Tragedy("Hamlet", "tragedy"),
+            "as-like" to Comedy("As You Like It", "comedy"),
+            "othello" to Tragedy("Othello", "tragedy")
         )
 
         val invoice = Invoice(
