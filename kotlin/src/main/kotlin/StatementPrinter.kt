@@ -8,19 +8,12 @@ val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).forma
 class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
+
         var totalAmount = 0
-        var volumeCredits = 0
         var result = "Statement for ${invoice.customer}\n"
-
-
         invoice.performances.forEach { perf ->
             val play = plays.getValue(perf.playID)
             val thisAmount = calculateAmountFor(play, perf)
-
-            // add volume credits
-            volumeCredits += max(perf.audience - 30, 0)
-            // add extra credit for every ten comedy attendees
-            if ("comedy" == play.type) volumeCredits += floor((perf.audience / 5).toDouble()).toInt()
 
             // print line for this order
             result += "  ${play.name}: ${format((thisAmount / 100).toLong())} (${perf.audience} seats)\n"
@@ -28,8 +21,23 @@ class StatementPrinter {
             totalAmount += thisAmount
         }
         result += "Amount owed is ${format((totalAmount / 100).toLong())}\n"
+
+        val volumeCredits = calculateVolumeCredits(invoice, plays)
         result += "You earned $volumeCredits credits\n"
+
         return result
+    }
+
+    private fun calculateVolumeCredits(invoice: Invoice, plays: Map<String, Play>): Int {
+        var volumeCredits = 0
+        invoice.performances.forEach { perf ->
+            val play = plays.getValue(perf.playID)
+            // add volume credits
+            volumeCredits += max(perf.audience - 30, 0)
+            // add extra credit for every ten comedy attendees
+            if ("comedy" == play.type) volumeCredits += floor((perf.audience / 5).toDouble()).toInt()
+        }
+        return volumeCredits
     }
 
     private fun calculateAmountFor(play: Play, perf: Performance): Int {
