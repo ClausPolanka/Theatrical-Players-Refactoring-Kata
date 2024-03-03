@@ -9,7 +9,7 @@ class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
         val statementData = createStatementData(invoice, plays)
-        val totalAmount = statementData.sumBy { t -> t.amount }
+        val totalAmount = statementData.sumBy { it.amount }
         val volumeCredits = calculateVolumeCredits(invoice, plays)
         return createStatement(invoice, statementData, totalAmount, volumeCredits)
     }
