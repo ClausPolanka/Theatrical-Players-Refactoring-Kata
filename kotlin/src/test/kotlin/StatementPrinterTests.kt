@@ -1,7 +1,6 @@
 
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
-import org.approvaltests.Approvals.verify
+import org.approvaltests.Approvals.*
+import org.junit.jupiter.api.*
 
 class StatementPrinterTests {
 
