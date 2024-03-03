@@ -1,3 +1,4 @@
+import java.lang.System.*
 import java.text.*
 import java.util.*
 
@@ -19,13 +20,17 @@ class StatementPrinter {
         volumeCredits: Int
     ) = """Statement for ${invoice.customer}
              |${statementData.statementLines()}
-             |Amount owed is ${format((totalAmount / 100).toLong())}
+             |Amount owed is ${format(toDollar(totalAmount))}
              |You earned $volumeCredits credits
              |""".trimMargin()
 
     private fun List<StatementData>.statementLines() =
-        joinToString(separator = "\n") { statement ->
-            "  ${statement.playName}: ${format((statement.amount / 100).toLong())} (${statement.audience} seats)"
+        joinToString(separator = lineSeparator()) { statement ->
+            "  ${statement.playName}: " +
+                "${format(toDollar(statement.amount))} " +
+                "(${statement.audience} seats)"
         }
+
+    private fun toDollar(amount: Int) = (amount / 100).toLong()
 }
 
