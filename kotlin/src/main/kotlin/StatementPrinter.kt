@@ -8,24 +8,19 @@ val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).forma
 class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
-
-        var totalAmount = 0
-        var result = "Statement for ${invoice.customer}\n"
-        invoice.performances.forEach { perf ->
+        val triples = invoice.performances.map { perf ->
             val play = plays.getValue(perf.playID)
-            val thisAmount = calculateAmountFor(play, perf)
-
-            // print line for this order
-            result += "  ${play.name}: ${format((thisAmount / 100).toLong())} (${perf.audience} seats)\n"
-
-            totalAmount += thisAmount
+            val amt = calculateAmountFor(play, perf)
+            Triple(play.name, amt, perf.audience)
         }
-        result += "Amount owed is ${format((totalAmount / 100).toLong())}\n"
-
+        val totalAmount = triples.sumBy { t -> t.second }
         val volumeCredits = calculateVolumeCredits(invoice, plays)
-        result += "You earned $volumeCredits credits\n"
 
-        return result
+        val header = "Statement for ${invoice.customer}\n"
+        val lines = triples.map { t -> "  ${t.first}: ${format((t.second / 100).toLong())} (${t.third} seats)\n"  }
+        val amountOwned = "Amount owed is ${format((totalAmount / 100).toLong())}\n"
+        val earnedCredits = "You earned $volumeCredits credits\n"
+        return header + lines.joinToString(separator = "") + amountOwned + earnedCredits
     }
 
     private fun calculateVolumeCredits(invoice: Invoice, plays: Map<String, Play>): Int {
