@@ -8,14 +8,19 @@ val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.US).forma
 class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
-        val statementData = invoice.performances.map { perf ->
-            val play = plays.getValue(perf.playID)
-            val amt = calculateAmountFor(play, perf)
-            StatementData(play.name, amt, perf.audience)
-        }
+        val statementData = createStatementData(invoice, plays)
         val totalAmount = statementData.sumBy { t -> t.amount }
         val volumeCredits = calculateVolumeCredits(invoice, plays)
         return createStatement(invoice, statementData, totalAmount, volumeCredits)
+    }
+
+    private fun createStatementData(
+        invoice: Invoice,
+        plays: Map<String, Play>
+    ) = invoice.performances.map { perf ->
+        val play = plays.getValue(perf.playID)
+        val amt = calculateAmountFor(play, perf)
+        StatementData(play.name, amt, perf.audience)
     }
 
     private fun createStatement(
@@ -23,14 +28,16 @@ class StatementPrinter {
         statementData: List<StatementData>,
         totalAmount: Int,
         volumeCredits: Int
-    ): String {
-        val header = "Statement for ${invoice.customer}\n"
-        val lines =
-            statementData.map { t -> "  ${t.playName}: ${format((t.amount / 100).toLong())} (${t.audience} seats)\n" }
-        val amountOwned = "Amount owed is ${format((totalAmount / 100).toLong())}\n"
-        val earnedCredits = "You earned $volumeCredits credits\n"
-        return header + lines.joinToString(separator = "") + amountOwned + earnedCredits
-    }
+    )= """Statement for ${invoice.customer}
+             |${statementData.statementLines()}
+             |Amount owed is ${format((totalAmount / 100).toLong())}
+             |You earned $volumeCredits credits
+             |""".trimMargin()
+
+    private fun List<StatementData>.statementLines() =
+        joinToString(separator = "\n") { statement ->
+            "  ${statement.playName}: ${format((statement.amount / 100).toLong())} (${statement.audience} seats)"
+        }
 
     private fun calculateVolumeCredits(invoice: Invoice, plays: Map<String, Play>): Int {
         val creditData = invoice.performances.map { perf ->
