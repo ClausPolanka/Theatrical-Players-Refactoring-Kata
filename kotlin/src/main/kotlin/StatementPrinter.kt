@@ -40,10 +40,11 @@ class StatementPrinter {
         }
 
     private fun calculateVolumeCredits(invoice: Invoice, plays: Map<String, Play>): Int {
-        return invoice.performances.map { perf ->
-            val play = plays.getValue(perf.playID)
-            play.credits(perf.audience)
-        }
+        return invoice.performances
+            .map { perf ->
+                val play = plays.getValue(perf.playID)
+                play.credits(perf.audience)
+            }
             .sum()
     }
 
