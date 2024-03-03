@@ -7,27 +7,22 @@ private val format = { number: Long -> NumberFormat.getCurrencyInstance(Locale.U
 class StatementPrinter {
 
     fun print(invoice: Invoice, plays: Map<String, Play>): String {
-        val statementData = invoice.statementDataFor(plays)
-        val totalAmountInCents = statementData.sumBy { it.amountInCents }
-        val volumeCredits = invoice.creditsFor(plays)
         return createStatement(
-            invoice,
-            statementData,
-            totalAmountInCents,
-            volumeCredits
+            invoice.customer,
+            invoice.statementDataFor(plays),
+            invoice.creditsFor(plays)
         )
     }
 
     private fun createStatement(
-        invoice: Invoice,
+        customer: String,
         statementData: List<StatementData>,
-        totalAmountInCents: Int,
         volumeCredits: Int
-    ) = """Statement for ${invoice.customer}
-             |${statementData.statementLines()}
-             |Amount owed is ${format(toDollar(totalAmountInCents))}
-             |You earned $volumeCredits credits
-             |""".trimMargin()
+    ) = """Statement for $customer
+          |${statementData.statementLines()}
+          |Amount owed is ${format(toDollar(statementData.sumBy { it.amountInCents }))}
+          |You earned $volumeCredits credits
+          |""".trimMargin()
 
     private fun List<StatementData>.statementLines() =
         joinToString(separator = lineSeparator()) { statement ->
